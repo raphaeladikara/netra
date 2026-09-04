@@ -42,7 +42,7 @@ function DashboardShot() {
         <span className="size-2.5 rounded-full bg-[#febc2e]" />
         <span className="size-2.5 rounded-full bg-[#28c840]" />
         <span className="mx-auto rounded-md bg-ink px-3 py-1 font-mono text-[10px] text-faint">
-          bytetrack.id/app/peta
+          netra.id/app/peta
         </span>
       </div>
 
@@ -128,7 +128,7 @@ export function Hero() {
           className="anim-rise mx-auto mt-6 max-w-[64ch] text-balance text-center text-[15px] leading-relaxed text-dim sm:text-base"
           style={{ animationDelay: '120ms' }}
         >
-          ByteTrack menyambung penampakan dari puluhan kamera menjadi satu perjalanan per kendaraan. Plat dibaca kalau
+          Netra menyambung penampakan dari puluhan kamera menjadi satu perjalanan per kendaraan. Plat dibaca kalau
           terlihat; kalau tidak, Re-ID yang meneruskan. Dashboard selalu tahu kendaraan mana yang masih di dalam dan
           terakhir terlihat di zona apa.
         </p>

@@ -52,7 +52,7 @@ export default function FieldPage() {
 
             <div className="mx-4 overflow-hidden rounded-2xl border border-warn/35 bg-warn/[0.05]">
               <div className="flex items-center gap-2 px-4 pb-2 pt-3.5">
-                <span className="size-2 rounded-full bg-warn" style={{ animation: 'bt-pulse 2s ease-in-out infinite' }} />
+                <span className="size-2 rounded-full bg-warn" style={{ animation: 'nt-pulse 2s ease-in-out infinite' }} />
                 <span className="text-[12px] text-dim">Peringatan · 12 menit lalu</span>
               </div>
               <div className="px-4">

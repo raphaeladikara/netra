@@ -107,7 +107,7 @@ export function Dot({ tone = 'neutral', pulse = false }: { tone?: keyof typeof T
   return (
     <span
       className={cn('inline-block size-2 shrink-0 rounded-full', bg)}
-      style={pulse ? { animation: 'bt-pulse 2.2s ease-in-out infinite' } : undefined}
+      style={pulse ? { animation: 'nt-pulse 2.2s ease-in-out infinite' } : undefined}
     />
   )
 }
@@ -191,5 +191,47 @@ export function Field({ label, children }: { label: string; children: ReactNode 
       <span className="text-[13px] text-dim">{label}</span>
       <span className="font-mono text-[13px] tabular-nums text-paper">{children}</span>
     </div>
+  )
+}
+
+/** A pressed-state chip for map layers and similar on/off view options. */
+export function Toggle({
+  on,
+  onClick,
+  children,
+  className,
+}: {
+  on: boolean
+  onClick: () => void
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={on}
+      className={cn(
+        'inline-flex h-8 items-center gap-2 rounded-lg border px-2.5 text-[12px] transition-colors duration-150',
+        on
+          ? 'border-azure/50 bg-azure/16 text-paper'
+          : 'border-line bg-ink-2 text-dim hover:border-line-2 hover:text-paper',
+        className,
+      )}
+    >
+      <span
+        className={cn(
+          'inline-block h-3 w-5 rounded-full p-[2px] transition-colors duration-150',
+          on ? 'bg-azure' : 'bg-line-2',
+        )}
+      >
+        <span
+          className={cn(
+            'block size-2 rounded-full bg-white transition-transform duration-150',
+            on ? 'translate-x-2' : 'translate-x-0',
+          )}
+        />
+      </span>
+      {children}
+    </button>
   )
 }

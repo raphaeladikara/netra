@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import { TopBar, Page } from '../Shell'
-import { SiteMap } from '../../components/site/SiteMap'
+import { SiteMap, type MapView } from '../../components/site/SiteMap'
 import { CameraFeed } from '../../components/cctv/CameraFeed'
-import { Panel, PanelHead, Segmented, Badge, Dot } from '../../components/ui'
-import { ESTATE, insideNow, vehicles, cameras, cameraByName, vehicleByPlate, zoneName, zoneOccupancy } from '../../lib/data'
+import { Panel, PanelHead, Segmented, Badge, Dot, Toggle } from '../../components/ui'
+import { ESTATE, insideNow, vehicles, cameras, cameraFor, vehicleByPlate, zoneName, zoneOccupancy } from '../../lib/data'
 import { cn } from '../../lib/cn'
 
 const FLAG_LABEL = {
@@ -19,8 +19,11 @@ const ago = (s: number) => (s < 60 ? `${s} dtk lalu` : `${Math.round(s / 60)} mn
 export default function MapPage() {
   const [filter, setFilter] = useState<'all' | 'truck' | 'overstay'>('all')
   const [selected, setSelected] = useState<string | null>(insideNow[0].plate)
+  const [view, setView] = useState<MapView>('iso')
+  const [cones, setCones] = useState(false)
+  const [plates, setPlates] = useState(false)
   const v = selected ? vehicleByPlate(selected) : undefined
-  const cam = v ? cameraByName(v.cam) ?? cameras[0] : cameras[0]
+  const cam = v ? cameraFor(v.cam) ?? cameras[0] : cameras[0]
 
   const counts = {
     normal: insideNow.filter((x) => x.flag === 'normal').length,
@@ -46,9 +49,22 @@ export default function MapPage() {
         <div className="flex min-w-0 flex-col gap-4">
           <Panel className="flex min-w-0 flex-col overflow-hidden p-0">
             <PanelHead title="Denah kawasan" meta={ESTATE.phase}>
-              <span className="ml-auto rounded-md border border-azure/35 bg-azure/12 px-2 py-1 text-[11px] text-ice">
-                {v ? `${v.id} dipilih` : 'Tidak ada yang dipilih'}
-              </span>
+              <div className="ml-auto flex flex-wrap items-center gap-2">
+                <Segmented
+                  value={view}
+                  onChange={setView}
+                  options={[
+                    { value: 'iso', label: 'Isometrik' },
+                    { value: 'plan', label: 'Denah' },
+                  ]}
+                />
+                <Toggle on={cones} onClick={() => setCones((x) => !x)}>
+                  Cakupan kamera
+                </Toggle>
+                <Toggle on={plates} onClick={() => setPlates((x) => !x)}>
+                  Semua plat
+                </Toggle>
+              </div>
             </PanelHead>
 
             <div className="min-h-0 flex-1 bg-ink/40 p-3">
@@ -56,7 +72,10 @@ export default function MapPage() {
                 selected={selected}
                 onSelect={setSelected}
                 filter={filter}
-                className="aspect-[1000/620] max-h-[58vh] w-full"
+                view={view}
+                showCones={cones}
+                showPlates={plates}
+                className={cn('w-full max-h-[60vh]', view === 'iso' ? 'aspect-[1440/960]' : 'aspect-[1000/620]')}
               />
             </div>
 
@@ -65,14 +84,24 @@ export default function MapPage() {
                 <Dot tone="azure" /> Normal
               </span>
               <span className="flex items-center gap-2">
-                <Dot tone="warn" /> Melebihi batas berhenti
+                <Dot tone="warn" /> Melebihi batas
               </span>
               <span className="flex items-center gap-2">
                 <Dot tone="neutral" /> Belum terverifikasi
               </span>
               <span className="flex items-center gap-2">
+                <span className="inline-block h-2.5 w-3.5 rounded-[2px] bg-dim" /> Truk
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="inline-block size-2.5 rounded-full border-2 border-ok" /> Kamera gerbang
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="inline-block size-2.5 rounded-full border-2 border-scan" /> Kamera internal
+              </span>
+              <span className="flex items-center gap-2">
                 <span className="inline-block h-px w-4 border-t-2 border-dashed border-scan" /> Rute lintas kamera
               </span>
+              <span className="ml-auto text-faint">Arahkan kursor ke kamera untuk melihat cakupannya</span>
             </div>
           </Panel>
 

@@ -2,8 +2,8 @@ import { seeded, between } from './rng'
 import { frames, formatPlate } from './frames'
 
 export const ESTATE = {
-  brand: 'ByteTrack',
-  product: 'ByteTrack Command',
+  brand: 'Netra',
+  product: 'Netra Command',
   estate: 'Bumi Sentosa Business Park',
   phase: 'Fase 1 — cluster Sentosa dan sekitarnya',
   operator: { name: 'Andi Nugroho', role: 'Operator', shift: 'Shift pagi', initials: 'AN' },
@@ -94,8 +94,8 @@ const CAM_SEEDS: CamSeed[] = [
   ['ROAD_E', 'internal', 'train089', 962, 320, 200, '/clips/simpang-timur.mp4'],
   ['ROAD_N', 'internal', 'train674', 612, 92, 200],
   ['ROAD_W', 'internal', 'val070', 46, 380, 20],
-  ['PARK', 'internal', 'test054', 238, 486, 320],
-  ['RUKO', 'internal', 'test073', 150, 470, 60],
+  ['PARK', 'internal', 'test054', 246, 504, 300],
+  ['RUKO', 'internal', 'test073', 150, 396, 60],
   ['FENCE', 'internal', null, 40, 56, 35],
   ['FENCE', 'internal', 'train647', 960, 56, 145],
   ['FENCE', 'internal', 'train370', 960, 564, 215],
@@ -147,7 +147,8 @@ export const cameras: Camera[] = CAM_SEEDS.map(([zoneId, role, frame, x, y, bear
 })
 
 export const cameraById = (id: string) => cameras.find((c) => c.id === id)
-export const cameraByName = (name: string) => cameras.find((c) => c.name === name)
+/** Hops store camera ids ('CAM-03'); some UI still speaks display names ('Cam 03'). */
+export const cameraFor = (ref: string) => cameras.find((c) => c.id === ref || c.name === ref)
 export const camerasInZone = (zoneId: string) => cameras.filter((c) => c.zoneId === zoneId)
 
 /* -------------------------------------------------------- camera topology */
@@ -284,7 +285,7 @@ const VEH_SEEDS: VehSeed[] = [
     color: 'Putih',
     tenant: TENANTS[3],
     flag: 'overstay',
-    spot: [452, 424],
+    spot: [196, 506],
     route: [
       ['CAM-01', 'GATE_N', 0, 'Masuk kawasan, plat terbaca penuh', 'plate', 'train157'],
       ['CAM-03', 'ROAD_MAIN', 7, 'Melintas jalur utama', 'fusion', 'train159'],
@@ -300,7 +301,7 @@ const VEH_SEEDS: VehSeed[] = [
     type: 'MPV',
     color: 'Hitam',
     tenant: TENANTS[0],
-    spot: [206, 176],
+    spot: [470, 186],
     route: [
       ['CAM-01', 'GATE_N', 0, 'Masuk kawasan, plat terbaca', 'plate', 'val087'],
       ['CAM-03', 'ROAD_MAIN', 6, 'Melintas jalur utama', 'plate', 'train700'],
@@ -316,7 +317,7 @@ const VEH_SEEDS: VehSeed[] = [
     color: 'Hitam',
     tenant: TENANTS[2],
     flag: 'unverified',
-    spot: [340, 300],
+    spot: [136, 522],
     route: [
       ['CAM-01', 'GATE_N', 0, 'Masuk kawasan, plat terbaca', 'plate', 'train306'],
       ['CAM-03', 'ROAD_MAIN', 5, 'Melintas jalur utama, jarak jauh', 'reid', 'train305'],
@@ -358,7 +359,7 @@ const VEH_SEEDS: VehSeed[] = [
     type: 'SUV',
     color: 'Merah',
     tenant: TENANTS[5],
-    spot: [206, 470],
+    spot: [258, 528],
     route: [
       ['CAM-01', 'GATE_N', 0, 'Masuk kawasan, plat terbaca', 'plate'],
       ['CAM-05', 'ROAD_W', 8, 'Melintas jalur barat', 'reid'],
@@ -429,7 +430,7 @@ const VEH_SEEDS: VehSeed[] = [
     type: 'Hatchback',
     color: 'Krem',
     tenant: TENANTS[1],
-    spot: [640, 300],
+    spot: [512, 244],
     route: [
       ['CAM-01', 'GATE_N', 0, 'Masuk kawasan, plat terbaca', 'plate'],
       ['CAM-04', 'ROAD_MAIN', 8, 'Melintas jalur utama', 'reid'],
@@ -442,7 +443,7 @@ const VEH_SEEDS: VehSeed[] = [
     type: 'MPV',
     color: 'Putih',
     tenant: TENANTS[3],
-    spot: [120, 300],
+    spot: [138, 384],
     route: [
       ['CAM-01', 'GATE_N', 0, 'Masuk kawasan, plat terbaca', 'plate'],
       ['CAM-05', 'ROAD_W', 7, 'Melintas jalur barat', 'reid'],
@@ -506,7 +507,7 @@ export const vehicles: Vehicle[] = VEH_SEEDS.map((s, i) => {
   const hops: Hop[] = s.route.map(([cam, zoneId, minutes, event, by, hopFrame]) => {
     const rr = seeded(`hop-${s.frame}-${cam}-${minutes}`)
     const [lo, hi] = CONF_BY_METHOD[by]
-    const camera = cameraByName(cam) ?? cameras.find((c) => c.id === cam)
+    const camera = cameraFor(cam) ?? cameras.find((c) => c.id === cam)
     return {
       time: fromMin(start + minutes),
       cam,

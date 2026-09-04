@@ -4,7 +4,7 @@ import { Search, Download, Plus, ArrowUpRight } from 'lucide-react'
 import { TopBar, Page } from '../Shell'
 import { CameraFeed } from '../../components/cctv/CameraFeed'
 import { Panel, PanelHead, Badge, Button, Field, Dot } from '../../components/ui'
-import { vehicles, cameraByName, cameras, zoneName } from '../../lib/data'
+import { vehicles, cameraFor, cameras, zoneName } from '../../lib/data'
 import { frames } from '../../lib/frames'
 import { cn } from '../../lib/cn'
 
@@ -130,7 +130,7 @@ export default function VehiclesPage() {
                   </thead>
                   <tbody className="divide-y divide-line/70">
                     {v.hops.map((h, i) => {
-                      const c = cameraByName(h.cam) ?? cameras[0]
+                      const c = cameraFor(h.cam) ?? cameras[0]
                       const m = METHOD[h.by]
                       return (
                         <tr key={i} className="align-middle transition-colors hover:bg-raised/30">

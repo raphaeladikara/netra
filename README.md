@@ -1,4 +1,4 @@
-# ByteTrack
+# Netra
 
 Purwarupa web untuk sistem pelacakan kendaraan lintas kamera di kawasan industri —
 landing page plus dashboard operator, seluruhnya dengan data contoh.
@@ -119,9 +119,5 @@ React Router di sisi klien.
 ## Catatan
 
 Badge **DATA CONTOH** muncul di setiap layar dashboard. Biarkan sampai data aslinya masuk.
-
-Nama produk di purwarupa ini sama dengan nama tracker open-source **ByteTrack**, yang
-juga dipakai sebagai salah satu komponen di rantai pemrosesan. Kalau purwarupa ini nanti
-jadi produk beneran, namanya sebaiknya diganti supaya tidak rancu.
 
 Konteks produk ada di [PRODUCT.md](PRODUCT.md), keputusan visual di [DESIGN.md](DESIGN.md).

@@ -6,7 +6,7 @@ import { CrossCamera, Recording, Archive, Bandwidth, Capabilities, Cta } from '.
 
 export default function Landing() {
   useEffect(() => {
-    document.title = 'ByteTrack — Satu Kendaraan, Semua Kamera, Satu Identitas'
+    document.title = 'Netra — Satu Kendaraan, Semua Kamera, Satu Identitas'
   }, [])
 
   return (

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { CctvScene } from './CctvScene'
 import { cn } from '../../lib/cn'
 import { frames, formatPlate } from '../../lib/frames'
@@ -76,10 +77,14 @@ export function CameraFeed({
   labels = true,
   onLoad,
 }: Props) {
+  // boxes wait for the frame; drawing them over a not-yet-loaded tile reads as a bug
+  const [ready, setReady] = useState(false)
   const offline = camera.state === 'offline'
   const frame = camera.frame ? frames[camera.frame] : null
-  const list = offline ? [] : boxes === false ? [] : (boxes ?? plateBoxes(camera.frame))
   const isClip = Boolean(camera.clip)
+  // A clip and a still are two different scenes. The dataset boxes belong to the
+  // still, so drawing them over the clip would put rectangles on empty asphalt.
+  const list = offline || isClip || (frame && !ready) ? [] : boxes === false ? [] : (boxes ?? plateBoxes(camera.frame))
 
   return (
     <div className={cn('relative isolate overflow-hidden bg-ink-2', className)}>
@@ -101,8 +106,11 @@ export function CameraFeed({
           alt=""
           loading="lazy"
           decoding="async"
-          onLoad={onLoad}
-          className="h-full w-full object-cover"
+          onLoad={() => {
+            setReady(true)
+            onLoad?.()
+          }}
+          className={cn('h-full w-full object-cover transition-opacity duration-300', ready ? 'opacity-100' : 'opacity-0')}
         />
       ) : (
         <CctvScene kind={camera.kind ?? 'road'} seed={camera.id} />
@@ -155,7 +163,7 @@ export function CameraFeed({
                 'size-1.5 rounded-full',
                 offline ? 'bg-alarm' : camera.state === 'attention' ? 'bg-warn' : 'bg-ok',
               )}
-              style={live && !compact && !offline ? { animation: 'bt-pulse 2.4s ease-in-out infinite' } : undefined}
+              style={live && !compact && !offline ? { animation: 'nt-pulse 2.4s ease-in-out infinite' } : undefined}
             />
             <span className="font-mono text-[10px] tracking-tight text-paper/90">{camera.name}</span>
             {!compact && <span className="text-[10px] text-dim">· {camera.zone}</span>}
@@ -170,12 +178,12 @@ export function CameraFeed({
         {!compact && !offline && (
           <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-2">
             <span className="rounded bg-ink/70 px-1.5 py-[3px] font-mono text-[9px] uppercase tracking-[0.14em] text-dim backdrop-blur-sm">
-              {list.length > 0 ? `${list.length} plat terdeteksi` : camera.id}
+              {isClip ? 'klip uji · tanpa anotasi' : list.length > 0 ? `${list.length} plat terdeteksi` : camera.id}
             </span>
             <span className="flex items-center gap-1 rounded bg-ink/70 px-1.5 py-[3px] font-mono text-[9px] uppercase tracking-[0.14em] text-alarm backdrop-blur-sm">
               <span
                 className="size-1.5 rounded-full bg-alarm"
-                style={live ? { animation: 'bt-pulse 1.6s ease-in-out infinite' } : undefined}
+                style={live ? { animation: 'nt-pulse 1.6s ease-in-out infinite' } : undefined}
               />
               rec
             </span>
@@ -187,7 +195,7 @@ export function CameraFeed({
             className="absolute inset-x-0 top-0 h-6"
             style={{
               background: 'linear-gradient(to bottom, transparent, hsl(188 92% 56% / 0.16), transparent)',
-              animation: 'bt-scan 5.5s linear infinite',
+              animation: 'nt-scan 5.5s linear infinite',
             }}
           />
         )}

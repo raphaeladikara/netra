@@ -38,7 +38,7 @@ export function Recording() {
     <Section id="rekaman" mark="Manajemen rekaman">
       <Heading>Setiap stream terekam, tersimpan, bisa diputar ulang.</Heading>
       <Lede>
-        Kamera tanpa rekaman hanya berguna kalau ada orang yang kebetulan sedang menonton. ByteTrack merekam semuanya,
+        Kamera tanpa rekaman hanya berguna kalau ada orang yang kebetulan sedang menonton. Netra merekam semuanya,
         menyimpannya sesuai kebijakan per zona, dan menyiapkan playback dari titik mana pun di rentang retensi.
       </Lede>
 
@@ -182,7 +182,7 @@ export function Archive() {
 const CODECS = [
   { name: 'H.264 mentah', pct: 100, size: '21,5 MB', tone: 'from-[hsl(217_14%_38%)] to-[hsl(217_14%_46%)]' },
   { name: 'H.265 standar', pct: 58, size: '12,4 MB', tone: 'from-[hsl(217_30%_44%)] to-[hsl(217_34%_54%)]' },
-  { name: 'ByteTrack adaptif', pct: 13, size: '1,38 MB', tone: 'from-[hsl(217_91%_58%)] to-[hsl(196_92%_64%)]' },
+  { name: 'Netra adaptif', pct: 13, size: '1,38 MB', tone: 'from-[hsl(217_91%_58%)] to-[hsl(196_92%_64%)]' },
 ]
 
 export function Bandwidth() {
@@ -190,7 +190,7 @@ export function Bandwidth() {
     <Section id="jaringan" mark="Kompresi adaptif">
       <Heading>Sampai 87% lebih hemat bandwidth. Nyaris tanpa kehilangan detail.</Heading>
       <Lede>
-        Kawasan industri jarang punya serat optik ke setiap titik kamera. ByteTrack menyesuaikan bitrate per kamera
+        Kawasan industri jarang punya serat optik ke setiap titik kamera. Netra menyesuaikan bitrate per kamera
         berdasarkan apa yang benar-benar bergerak di frame, dan menaikkannya kembali begitu ada kejadian.
       </Lede>
 
@@ -371,7 +371,7 @@ export function Cta() {
               ))}
             </ul>
             <a
-              href="mailto:halo@bytetrack.id"
+              href="mailto:halo@netra.id"
               className="mt-7 inline-flex h-10 items-center gap-2 rounded-xl border border-line-2 bg-raised/50 px-4 text-sm font-medium text-paper transition-colors hover:bg-raised"
             >
               Kirim rekaman uji

@@ -104,7 +104,7 @@ export function Nav() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-[1180px] items-center gap-6 px-5 sm:px-8">
-        <Link to="/" className="shrink-0" aria-label="ByteTrack — beranda">
+        <Link to="/" className="shrink-0" aria-label="Netra — beranda">
           <Wordmark />
         </Link>
 
@@ -169,7 +169,7 @@ export function Nav() {
 
 export function Footer() {
   const cols: Array<{ title: string; items: string[] }> = [
-    { title: 'Produk', items: ['ByteTrack Command', 'ByteTrack Stream', 'ByteTrack Engine', 'ByteTrack Field'] },
+    { title: 'Produk', items: ['Netra Command', 'Netra Stream', 'Netra Engine', 'Netra Field'] },
     { title: 'Solusi', items: ['Kawasan industri', 'Pergudangan & logistik', 'Perumahan & komersial', 'Pelabuhan & terminal'] },
     { title: 'Sumber daya', items: ['Dokumentasi', 'Panduan penerapan', 'Kalkulator storage', 'Status layanan'] },
   ]
@@ -186,7 +186,7 @@ export function Footer() {
             <dl className="mt-6 space-y-1.5 text-sm">
               <div className="flex gap-2">
                 <dt className="text-faint">Surel</dt>
-                <dd className="text-dim">halo@bytetrack.id</dd>
+                <dd className="text-dim">halo@netra.id</dd>
               </div>
               <div className="flex gap-2">
                 <dt className="text-faint">Telepon</dt>
@@ -216,7 +216,7 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col gap-3 border-t border-line pt-6 text-xs text-faint sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 ByteTrack Teknologi Nusantara. Purwarupa demonstrasi — angka dan rekaman di halaman ini adalah data contoh.</p>
+          <p>© 2026 Netra Teknologi Nusantara. Purwarupa demonstrasi — angka dan rekaman di halaman ini adalah data contoh.</p>
           <div className="flex items-center gap-2">
             <Mark className="size-4" />
             <span className="font-mono tracking-tight">v0.9 · demo</span>

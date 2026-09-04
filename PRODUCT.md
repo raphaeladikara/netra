@@ -1,8 +1,8 @@
-# ByteTrack — konteks produk
+# Netra — konteks produk
 
 ## Apa ini
 
-Purwarupa web untuk **ByteTrack**, sistem pelacakan kendaraan lintas kamera (MTMCT)
+Purwarupa web untuk **Netra**, sistem pelacakan kendaraan lintas kamera (MTMCT)
 untuk kawasan industri.
 Nama, angka, dan seluruh isinya fiktif — dipakai sebagai contoh produk, bukan materi
 penawaran ke klien mana pun.

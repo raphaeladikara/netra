@@ -6,7 +6,7 @@ import { SiteMap } from '../../components/site/SiteMap'
 import { PlateExtraction } from '../../components/anpr/PlateExtraction'
 import { ReidGallery, TopologyGraph } from '../../components/reid/Reid'
 import { Panel, PanelHead, Badge, Button, Field, Dot } from '../../components/ui'
-import { vehicleByPlate, cameraByName, cameras, zoneName } from '../../lib/data'
+import { vehicleByPlate, cameraFor, cameras, zoneName } from '../../lib/data'
 
 const METHOD = {
   plate: { label: 'Plat terbaca', tone: 'ok' as const },
@@ -34,7 +34,7 @@ export default function JourneyPage() {
     )
   }
 
-  const path = v.hops.map((h) => cameraByName(h.cam)?.id).filter((x): x is string => Boolean(x))
+  const path = v.hops.map((h) => cameraFor(h.cam)?.id).filter((x): x is string => Boolean(x))
   const uniquePath = path.filter((c, i) => i === 0 || c !== path[i - 1])
   const reidHops = v.hops.filter((h) => h.by !== 'plate').length
 
@@ -74,7 +74,7 @@ export default function JourneyPage() {
             />
             <ol className="px-5 py-2">
               {v.hops.map((h, i) => {
-                const c = cameraByName(h.cam) ?? cameras[0]
+                const c = cameraFor(h.cam) ?? cameras[0]
                 const last = i === v.hops.length - 1
                 const m = METHOD[h.by]
                 return (

@@ -189,7 +189,7 @@ export function TopBar({
       {children}
       <div className="ml-auto flex items-center gap-3">
         <span className="hidden items-center gap-1.5 text-[12px] text-dim sm:flex">
-          <span className="size-1.5 rounded-full bg-ok" style={{ animation: 'bt-pulse 2.4s ease-in-out infinite' }} />
+          <span className="size-1.5 rounded-full bg-ok" style={{ animation: 'nt-pulse 2.4s ease-in-out infinite' }} />
           Diperbarui {ESTATE.clock}
         </span>
         <span className="rounded-md border border-warn/35 bg-warn/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-warn">

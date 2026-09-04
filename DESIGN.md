@@ -1,8 +1,17 @@
-# ByteTrack — keputusan visual
+# Netra — keputusan visual
 
 Dunia visualnya adalah **ruang kendali yang lampunya diredupkan**: layar biru di
 ruangan gelap, denah kawasan sebagai gambar teknik, dan angka yang dibaca sekilas.
 Bukan "SaaS gelap dengan aksen" — gelapnya dipilih dari tempat pemakaiannya.
+
+## Logo
+
+Tiga kerucut kamera yang menutup ke satu titik: banyak sudut pandang, satu identitas.
+Di ukuran 16px ketiga bajinya terbaca sebagai iris — yang memang arti kata *netra*.
+Geometrinya satu baji yang diputar 120°, jadi celah dan bobotnya identik di semua
+ukuran. Titik sian di tengah adalah subjek yang sedang dilihat semua kamera.
+
+Wordmark: Plus Jakarta Sans ExtraBold, huruf kecil, tracking -0.045em.
 
 ## Token
 
@@ -51,11 +60,28 @@ Tiga sumber, berurutan sesuai kejujurannya:
 Semua diberi grade tipis ke arah CCTV: saturasi turun, kontras naik sedikit, lalu
 lapisan vignette dan interlace dari UI.
 
+## Denah kawasan
+
+Satu sistem koordinat (1000 × 620), dua proyeksi:
+
+- **Denah** — tegak lurus dari atas, untuk membaca posisi dengan presisi.
+- **Isometrik** — geometri yang sama diekstrusi, untuk membaca tempatnya sekilas.
+
+Karena keduanya diproyeksikan dari sumber yang sama, tidak mungkin melenceng satu
+sama lain. Label tetap tegak, tidak ikut dimiringkan — peta taktis boleh miring,
+tulisannya tidak.
+
+Bentuknya dibedakan supaya tidak perlu dibaca dua kali: **belah ketupat = kamera**,
+**lingkaran = mobil**, **persegi panjang = truk**. Cakupan kamera hanya muncul saat
+disorot atau saat lapisannya dinyalakan; plat hanya muncul untuk kendaraan yang
+dipilih. Yang selalu terlihat cuma yang selalu dibutuhkan: posisi, status, dan
+jumlah per zona.
+
 ## Gerak
 
 Satu gerakan utama: **sapuan analisis** yang turun pelan di feed kamera yang sedang
 difokuskan. Sisanya berhemat — hanya denyut pada status yang benar-benar hidup, ping
-sekali pada kendaraan terpilih di peta, dan `bt-rise` untuk masuknya hero.
+sekali pada kendaraan terpilih di peta, dan `nt-rise` untuk masuknya hero.
 
 Umpan kamera kecil (`compact`) tidak beranimasi sama sekali: dinding 16 kamera harus
 tetap ringan. Seluruh animasi dimatikan di `prefers-reduced-motion`.
