@@ -68,3 +68,19 @@ Badge **DATA CONTOH** muncul di setiap layar dashboard. Biarkan sampai data asli
 masuk.
 
 Konteks produk ada di [PRODUCT.md](PRODUCT.md), keputusan visual di [DESIGN.md](DESIGN.md).
+
+## Deploy ke Vercel
+
+Repo ini sudah siap diimpor apa adanya:
+
+1. Buka [vercel.com/new](https://vercel.com/new), pilih repo `raphaeladikara/netra`.
+2. Biarkan semua setelan bawaan — framework terdeteksi **Vite**, build `npm run build`,
+   output `dist`. Root Directory dibiarkan kosong.
+3. Deploy.
+
+[vercel.json](vercel.json) mengarahkan semua permintaan yang bukan berkas statis ke
+`index.html`. Tanpa itu, membuka `/app/peta` langsung atau me-refresh halaman dashboard
+akan menghasilkan 404, karena rutenya ditangani React Router di sisi klien.
+
+Setiap push ke `main` memicu deploy produksi; setiap branch lain dapat URL preview
+sendiri.

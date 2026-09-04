@@ -5,7 +5,7 @@
   "description": "Netra — demo platform video intelligence untuk kawasan industri (landing page + dashboard operator).",
   "type": "module",
   "engines": {
-    "node": ">=20.19"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "vite",
