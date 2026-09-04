@@ -26,7 +26,7 @@ export function Wordmark({ className, sub }: { className?: string; sub?: string 
     <span className={cn('flex items-center gap-2.5', className)}>
       <Mark />
       <span className="leading-none">
-        <span className="block text-[17px] font-bold tracking-[-0.03em] text-paper">netra</span>
+        <span className="block text-[17px] font-bold tracking-[-0.035em] text-paper">byte<span className="text-ice">track</span></span>
         {sub && <span className="mt-[3px] block font-mono text-[10px] uppercase tracking-[0.16em] text-faint">{sub}</span>}
       </span>
     </span>

@@ -1,10 +1,14 @@
-# Netra
+# ByteTrack
 
-Purwarupa web untuk platform video intelligence kawasan industri — landing page plus
-dashboard operator, seluruhnya dengan data contoh.
+Purwarupa web untuk sistem pelacakan kendaraan lintas kamera di kawasan industri —
+landing page plus dashboard operator, seluruhnya dengan data contoh.
 
-Nama, angka, tenant, dan rekaman di dalamnya fiktif. Ini contoh produk, bukan materi
-penawaran.
+Intinya bukan "membaca plat". Intinya: **satu kendaraan, dua puluh empat kamera, satu
+identitas** — kendaraan yang masuk gerbang tetap dikenali ketika muncul di kamera lain,
+bahkan saat platnya tidak terbaca.
+
+Nama kawasan, tenant, angka, dan skor Re-ID di dalamnya fiktif. Ini contoh produk, bukan
+materi penawaran.
 
 ## Menjalankan
 
@@ -13,7 +17,7 @@ npm install
 npm run dev
 ```
 
-Buka `http://localhost:5173`. Landing di `/`, dashboard di `/app`.
+Landing di `/`, dashboard di `/app`.
 
 ```bash
 npm run build     # produksi ke dist/
@@ -25,62 +29,99 @@ npm run preview   # cek hasil build
 | Rute | Isi |
 |---|---|
 | `/` | Landing page |
-| `/app/peta` | Denah kawasan, posisi kendaraan live, kamera |
-| `/app/dinding` | Dinding 4/9/16 kamera, live dan putar ulang, garis waktu rekaman |
-| `/app/kendaraan` | Pencarian plat, riwayat penampakan, kartu kendaraan |
-| `/app/kendaraan/:plat` | Detail satu perjalanan: rangkaian penampakan + rute di peta |
+| `/app/peta` | Denah kawasan, posisi kendaraan, rute lintas kamera, isi per zona |
+| `/app/dinding` | Dinding 4/9/16 kamera (foto asli + klip CCTV), playback, garis waktu |
+| `/app/kendaraan` | Pencarian plat/ID, riwayat penampakan, kartu identitas kendaraan |
+| `/app/kendaraan/:plat` | Satu perjalanan: rangkaian penampakan, ANPR, galeri Re-ID, topologi |
 | `/app/peringatan` | Antrean peringatan, tinjau, tugaskan, tutup |
+| `/app/identitas` | Peleburan identitas, serah terima antar kamera, topologi kamera |
 | `/app/kamera` | Kesehatan 24 kamera, uptime 14 hari, tiket |
-| `/app/analitik` | Lalu lintas per jam, durasi berhenti, jenis peringatan, tenant, uptime, akurasi |
+| `/app/analitik` | Lalu lintas, durasi berhenti, jenis peringatan, tenant, akurasi ANPR vs fusion |
 | `/app/audit` | Jejak audit, pengguna & peran, kebijakan retensi |
 | `/app/petugas` | Aplikasi petugas lapangan (dua layar ponsel) |
+
+## Dari mana gambarnya
+
+Frame kamera, kotak plat, dan kotak per karakter **bukan gambar hiasan** — semuanya
+anotasi asli dari dataset publik:
+
+| Aset | Sumber |
+|---|---|
+| `public/frames/*.jpg` + kotak plat | Indonesian License Plate Dataset — foto, label YOLO, dan string platnya |
+| `public/plates/*_ocr.jpg` + kotak karakter | Indonesian License Plate Recognition Dataset — satu crop per plat, label per karakter |
+| `public/clips/*.mp4` | Dataset CCTV lalu lintas publik, dipakai sebagai umpan bergerak |
+
+Tiga kendaraan di demo (`L 1731 LI`, `B 2005 POU`, `AB 1633 SY`) memang difoto
+berkali-kali oleh dataset itu, di jarak dan sudut berbeda. Itulah yang dipakai sebagai
+contoh Re-ID — jadi galeri "kendaraan yang sama di setiap kamera" benar-benar berisi
+kendaraan yang sama, bukan dua mobil yang kebetulan mirip.
+
+Klip bergerak sengaja tidak diberi kotak deteksi: untuk klip itu tidak ada anotasi per
+frame, dan menggambar kotak di atasnya cuma jadi hiasan yang menyesatkan.
+
+### Membangun ulang aset
+
+Dataset tidak ikut di-commit. Taruh salinannya di suatu tempat, lalu:
+
+```bash
+DATA_ROOT=/path/ke/data npx --yes -p sharp@0.34 node scripts/prepare-frames.mjs
+```
+
+Daftar frame yang dipakai ada di `scripts/frames.picks.json`. Script menulis
+`public/frames`, `public/plates`, dan `src/lib/frames.ts`.
 
 ## Susunan berkas
 
 ```
 src/
-  index.css                 token warna, tipografi, keyframe
-  lib/data.ts               seluruh data contoh (PRNG bersumber seed tetap)
-  lib/rng.ts                PRNG deterministik
+  index.css                    token warna, tipografi, keyframe
+  lib/data.ts                  kamera, zona, topologi, kendaraan, hop, peringatan
+  lib/frames.ts                GENERATED — frame, kotak plat, kotak karakter
+  lib/plate.ts                 format plat Indonesia
   components/
-    brand/Logo.tsx          mark + wordmark
-    ui.tsx                  Panel, Button, Badge, Stat, Segmented, Field, Dot
-    cctv/CctvScene.tsx      adegan CCTV prosedural (6 jenis, SVG)
-    cctv/CameraFeed.tsx     bingkai + overlay deteksi di atas adegan
-    site/SiteMap.tsx        denah kawasan (dipakai landing dan dashboard)
-  landing/                  Hero, Platform, Sections, parts (nav & footer)
-  dashboard/                Shell + 9 halaman
+    cctv/CameraFeed.tsx        satu ubin kamera: klip, foto, atau adegan prosedural
+    cctv/CctvScene.tsx         adegan SVG untuk kamera yang belum punya rekaman
+    anpr/PlateExtraction.tsx   pipeline ANPR empat langkah di atas frame asli
+    reid/Reid.tsx              peleburan sinyal, serah terima, topologi, galeri
+    site/SiteMap.tsx           denah kawasan
+    ui.tsx                     Panel, Button, Badge, Stat, Segmented, Field, Dot
+  landing/                     Hero, Platform, CrossCamera, Sections, parts
+  dashboard/                   Shell + 10 halaman
 ```
 
-## Mengganti data contoh dengan data asli
+## Model data
 
-- **Angka dan daftar** — ubah `src/lib/data.ts`. Semua halaman membaca dari sana.
-- **Rekaman kamera** — taruh snapshot di `public/`, lalu
-  `<CameraFeed camera={c} src="/snapshots/cam-01.jpg" />`. Lapisan overlay deteksi
-  tidak berubah; `boxes` menerima kotak dalam persen terhadap frame.
-- **Denah kawasan** — `BLOCKS` di `src/components/site/SiteMap.tsx` memakai sistem
-  koordinat 1000×620. Koordinat kamera dan kendaraan di `data.ts` memakai sistem yang
-  sama.
+Setiap kendaraan punya ID global (`VHC-0001`) yang tidak berubah walau platnya gagal
+terbaca di suatu kamera. Setiap penampakan (`Hop`) mencatat **bagaimana** identitasnya
+ditetapkan:
 
-## Catatan
+| `by` | Artinya |
+|---|---|
+| `plate` | Plat terbaca dan cocok |
+| `fusion` | Plat terbaca sebagian, dikuatkan embedding Re-ID |
+| `reid` | Plat tidak terbaca sama sekali; identitas dari embedding + topologi + waktu tempuh |
 
-Badge **DATA CONTOH** muncul di setiap layar dashboard. Biarkan sampai data aslinya
-masuk.
-
-Konteks produk ada di [PRODUCT.md](PRODUCT.md), keputusan visual di [DESIGN.md](DESIGN.md).
+`topology` di `data.ts` menyimpan kamera mana bertetangga dengan kamera mana beserta
+rentang waktu tempuhnya. Ini yang mencegah dua mobil putih sejenis tertukar: kecocokan
+penampilan setinggi apa pun tetap ditolak kalau perpindahannya mustahil.
 
 ## Deploy ke Vercel
 
-Repo ini sudah siap diimpor apa adanya:
-
 1. Buka [vercel.com/new](https://vercel.com/new), pilih repo `raphaeladikara/netra`.
-2. Biarkan semua setelan bawaan — framework terdeteksi **Vite**, build `npm run build`,
-   output `dist`. Root Directory dibiarkan kosong.
+2. Biarkan setelan bawaan — framework terdeteksi **Vite**, build `npm run build`,
+   output `dist`, Root Directory kosong.
 3. Deploy.
 
 [vercel.json](vercel.json) mengarahkan semua permintaan yang bukan berkas statis ke
-`index.html`. Tanpa itu, membuka `/app/peta` langsung atau me-refresh halaman dashboard
-akan menghasilkan 404, karena rutenya ditangani React Router di sisi klien.
+`index.html`. Tanpa itu, membuka `/app/peta` langsung akan 404, karena rutenya ditangani
+React Router di sisi klien.
 
-Setiap push ke `main` memicu deploy produksi; setiap branch lain dapat URL preview
-sendiri.
+## Catatan
+
+Badge **DATA CONTOH** muncul di setiap layar dashboard. Biarkan sampai data aslinya masuk.
+
+Nama produk di purwarupa ini sama dengan nama tracker open-source **ByteTrack**, yang
+juga dipakai sebagai salah satu komponen di rantai pemrosesan. Kalau purwarupa ini nanti
+jadi produk beneran, namanya sebaiknya diganti supaya tidak rancu.
+
+Konteks produk ada di [PRODUCT.md](PRODUCT.md), keputusan visual di [DESIGN.md](DESIGN.md).

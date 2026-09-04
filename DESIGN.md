@@ -1,4 +1,4 @@
-# Netra — keputusan visual
+# ByteTrack — keputusan visual
 
 Dunia visualnya adalah **ruang kendali yang lampunya diredupkan**: layar biru di
 ruangan gelap, denah kawasan sebagai gambar teknik, dan angka yang dibaca sekilas.
@@ -36,29 +36,34 @@ dekoratif.
   makin rapat.
 - Angka tabel selalu `tabular-nums`.
 
-## Adegan kamera
+## Umpan kamera
 
-`CctvScene.tsx` menggambar enam jenis pemandangan (gerbang, jalur, area loading,
-gudang, parkir, perimeter) sebagai SVG dari seed per kamera, lengkap dengan kolam
-cahaya lampu sodium, vignette, dan garis interlace tipis. `CameraFeed.tsx` menumpuk
-lapisan overlay di atasnya: kotak deteksi, label, jam, REC, dan sapuan analisis.
+Tiga sumber, berurutan sesuai kejujurannya:
 
-Menukar ke rekaman asli cukup lewat `<CameraFeed src="..." />` — lapisan overlaynya
-tidak berubah.
+1. **Klip CCTV** untuk kamera yang punya rekaman bergerak. Tanpa kotak deteksi — untuk
+   klip itu tidak ada anotasi per frame, dan kotak karangan di atas rekaman asli akan
+   menyesatkan.
+2. **Foto dataset** dengan kotak plat asli dari anotasinya. Ini yang membawa cerita
+   deteksi.
+3. **Adegan SVG prosedural** (`CctvScene.tsx`) untuk kamera yang belum punya rekaman
+   sama sekali, misalnya kamera yang sedang mati.
+
+Semua diberi grade tipis ke arah CCTV: saturasi turun, kontras naik sedikit, lalu
+lapisan vignette dan interlace dari UI.
 
 ## Gerak
 
 Satu gerakan utama: **sapuan analisis** yang turun pelan di feed kamera yang sedang
 difokuskan. Sisanya berhemat — hanya denyut pada status yang benar-benar hidup, ping
-sekali pada kendaraan terpilih di peta, dan `netra-rise` untuk masuknya hero.
+sekali pada kendaraan terpilih di peta, dan `bt-rise` untuk masuknya hero.
 
 Umpan kamera kecil (`compact`) tidak beranimasi sama sekali: dinding 16 kamera harus
 tetap ringan. Seluruh animasi dimatikan di `prefers-reduced-motion`.
 
 ## Grafik
 
-Palet kategorikal `#4C8DF6` / `#C96A3F` — diverifikasi dengan validator dataviz pada
-permukaan `#10192B`: lolos pita lightness, ambang chroma, pemisahan CVD
+Palet kategorikal  /  — diverifikasi dengan validator dataviz pada
+permukaan : lolos pita lightness, ambang chroma, pemisahan CVD
 (protan ΔE 26,5 · tritan ΔE 28,0), dan kontras. Ukuran tunggal memakai satu hue biru.
 
 Aturan yang dipegang: tidak pernah dua sumbu Y, legenda selalu ada untuk dua seri

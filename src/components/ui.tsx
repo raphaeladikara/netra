@@ -107,7 +107,7 @@ export function Dot({ tone = 'neutral', pulse = false }: { tone?: keyof typeof T
   return (
     <span
       className={cn('inline-block size-2 shrink-0 rounded-full', bg)}
-      style={pulse ? { animation: 'netra-pulse 2.2s ease-in-out infinite' } : undefined}
+      style={pulse ? { animation: 'bt-pulse 2.2s ease-in-out infinite' } : undefined}
     />
   )
 }

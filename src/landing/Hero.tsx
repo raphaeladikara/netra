@@ -18,7 +18,7 @@ function ShotRail() {
       <ul className="divide-y divide-line/70">
         {insideNow.slice(0, 6).map((v) => (
           <li key={v.plate} className="flex items-center gap-2.5 px-4 py-[9px]">
-            <Dot tone={v.status === 'overstay' ? 'warn' : v.status === 'unverified' ? 'neutral' : 'azure'} />
+            <Dot tone={v.flag === 'overstay' ? 'warn' : v.flag === 'unverified' ? 'neutral' : 'azure'} />
             <span className="font-mono text-[11px] tracking-tight text-paper">{v.plate}</span>
             <span className="ml-auto font-mono text-[10px] tabular-nums text-faint">{v.enteredAt}</span>
           </li>
@@ -42,7 +42,7 @@ function DashboardShot() {
         <span className="size-2.5 rounded-full bg-[#febc2e]" />
         <span className="size-2.5 rounded-full bg-[#28c840]" />
         <span className="mx-auto rounded-md bg-ink px-3 py-1 font-mono text-[10px] text-faint">
-          netra.id/app/peta
+          bytetrack.id/app/peta
         </span>
       </div>
 
@@ -71,7 +71,7 @@ function DashboardShot() {
             </span>
           </div>
           <div className="bg-ink px-3 py-3">
-            <SiteMap selected="B 1234 XYZ" compact className="aspect-[1000/560]" />
+            <SiteMap selected={insideNow[0].plate} compact className="aspect-[1000/560]" />
           </div>
         </div>
 
@@ -110,26 +110,27 @@ export function Hero() {
       <div className="relative z-10 mx-auto max-w-[1180px] px-5 sm:px-8">
         <div className="anim-rise flex flex-wrap items-center justify-center gap-2">
           <span className="inline-flex items-center gap-2 rounded-full border border-line-2 bg-ink-2/70 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-dim">
-            <Dot tone="scan" /> Video management system
+            <Dot tone="scan" /> Multi-camera tracking
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-azure/35 bg-azure/12 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ice">
-            <Dot tone="azure" /> Analitik AI on-premise
+            <Dot tone="azure" /> ANPR + Re-ID on-premise
           </span>
         </div>
 
         <h1
-          className="anim-rise mx-auto mt-7 max-w-[16ch] text-balance text-center text-[clamp(2.5rem,7.2vw,5rem)] font-extrabold leading-[0.98] tracking-[-0.045em] text-paper"
+          className="anim-rise mx-auto mt-7 max-w-[19ch] text-balance text-center text-[clamp(2.5rem,7.2vw,5rem)] font-extrabold leading-[0.98] tracking-[-0.045em] text-paper"
           style={{ animationDelay: '60ms' }}
         >
-          Semua Kamera, Satu Dashboard Cerdas.
+          Satu Kendaraan. Semua Kamera. Satu Identitas.
         </h1>
 
         <p
           className="anim-rise mx-auto mt-6 max-w-[64ch] text-balance text-center text-[15px] leading-relaxed text-dim sm:text-base"
           style={{ animationDelay: '120ms' }}
         >
-          Pantau, rekam, dan analisis ribuan kamera dari satu layar. Netra mengubah stream yang selama ini hanya
-          ditonton menjadi catatan yang bisa dicari: siapa masuk, kendaraan apa, jam berapa, lewat gerbang mana.
+          ByteTrack menyambung penampakan dari puluhan kamera menjadi satu perjalanan per kendaraan. Plat dibaca kalau
+          terlihat; kalau tidak, Re-ID yang meneruskan. Dashboard selalu tahu kendaraan mana yang masih di dalam dan
+          terakhir terlihat di zona apa.
         </p>
 
         <div className="anim-rise mt-9 flex flex-wrap items-center justify-center gap-3" style={{ animationDelay: '180ms' }}>

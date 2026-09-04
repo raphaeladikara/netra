@@ -259,7 +259,7 @@ export default function AnalyticsPage() {
                 <tr className="border-b border-line font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                   <th className="px-5 py-2.5 font-normal">Kondisi</th>
                   <th className="px-3 py-2.5 font-normal">Baca plat (ANPR)</th>
-                  <th className="px-5 py-2.5 font-normal">Deteksi kendaraan</th>
+                  <th className="px-5 py-2.5 font-normal">Plat + Re-ID</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line/70">
@@ -277,9 +277,9 @@ export default function AnalyticsPage() {
                     <td className="px-5 py-3">
                       <span className="flex items-center gap-3">
                         <span className="h-1.5 w-28 overflow-hidden rounded-full bg-raised">
-                          <span className="block h-full rounded-full" style={{ width: `${a.deteksi}%`, background: SERIES.keluar }} />
+                          <span className="block h-full rounded-full" style={{ width: `${a.fusion}%`, background: SERIES.keluar }} />
                         </span>
-                        <span className="font-mono text-[12px] tabular-nums text-dim">{a.deteksi.toFixed(1)}%</span>
+                        <span className="font-mono text-[12px] tabular-nums text-dim">{a.fusion.toFixed(1)}%</span>
                       </span>
                     </td>
                   </tr>

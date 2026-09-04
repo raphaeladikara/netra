@@ -20,9 +20,9 @@ function coverage(camId: string) {
 }
 
 const EVENTS = [
-  { at: 7 * 60 + 42, label: 'B 1234 XYZ masuk', tone: 'bg-scan' },
-  { at: 7 * 60 + 53, label: 'Berhenti dimulai', tone: 'bg-scan' },
-  { at: 8 * 60 + 38, label: 'Melebihi batas berhenti', tone: 'bg-warn' },
+  { at: 8 * 60 + 28, label: 'L 1731 LI masuk', tone: 'bg-scan' },
+  { at: 8 * 60 + 45, label: 'Berhenti dimulai', tone: 'bg-scan' },
+  { at: 9 * 60 + 32, label: 'Melebihi batas berhenti', tone: 'bg-warn' },
   { at: 6 * 60 + 12, label: 'Kamera putus', tone: 'bg-alarm' },
   { at: 9 * 60 + 2, label: 'Petugas menerima tugas', tone: 'bg-azure' },
 ]

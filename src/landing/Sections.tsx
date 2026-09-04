@@ -18,8 +18,9 @@ import {
   Check,
 } from 'lucide-react'
 import { Section, Heading, Lede } from './parts'
-import { retention } from '../lib/data'
+import { retention, reidExample } from '../lib/data'
 import { Badge } from '../components/ui'
+import { HandoffPair, FusionBars } from '../components/reid/Reid'
 import { cn } from '../lib/cn'
 
 /* ------------------------------------------------------- recording section */
@@ -37,7 +38,7 @@ export function Recording() {
     <Section id="rekaman" mark="Manajemen rekaman">
       <Heading>Setiap stream terekam, tersimpan, bisa diputar ulang.</Heading>
       <Lede>
-        Kamera tanpa rekaman hanya berguna kalau ada orang yang kebetulan sedang menonton. Netra merekam semuanya,
+        Kamera tanpa rekaman hanya berguna kalau ada orang yang kebetulan sedang menonton. ByteTrack merekam semuanya,
         menyimpannya sesuai kebijakan per zona, dan menyiapkan playback dari titik mana pun di rentang retensi.
       </Lede>
 
@@ -72,7 +73,8 @@ export function Recording() {
 
           <p className="mt-7 border-t border-line pt-5 text-[13px] leading-relaxed text-dim">
             Metadata perjalanan kendaraan disimpan lebih lama daripada videonya. Setelah rekaman gerbang habis masa
-            simpan, catatan “plat B 1234 XYZ masuk 07:42 lewat Gerbang Utara” beserta snapshot buktinya tetap ada.
+            simpan, catatan “VHC-0001 masuk 08:28 lewat Gerbang Utara, terakhir di Area parkir” beserta snapshot
+            buktinya tetap ada.
           </p>
         </div>
 
@@ -180,7 +182,7 @@ export function Archive() {
 const CODECS = [
   { name: 'H.264 mentah', pct: 100, size: '21,5 MB', tone: 'from-[hsl(217_14%_38%)] to-[hsl(217_14%_46%)]' },
   { name: 'H.265 standar', pct: 58, size: '12,4 MB', tone: 'from-[hsl(217_30%_44%)] to-[hsl(217_34%_54%)]' },
-  { name: 'Netra adaptif', pct: 13, size: '1,38 MB', tone: 'from-[hsl(217_91%_58%)] to-[hsl(196_92%_64%)]' },
+  { name: 'ByteTrack adaptif', pct: 13, size: '1,38 MB', tone: 'from-[hsl(217_91%_58%)] to-[hsl(196_92%_64%)]' },
 ]
 
 export function Bandwidth() {
@@ -188,7 +190,7 @@ export function Bandwidth() {
     <Section id="jaringan" mark="Kompresi adaptif">
       <Heading>Sampai 87% lebih hemat bandwidth. Nyaris tanpa kehilangan detail.</Heading>
       <Lede>
-        Kawasan industri jarang punya serat optik ke setiap titik kamera. Netra menyesuaikan bitrate per kamera
+        Kawasan industri jarang punya serat optik ke setiap titik kamera. ByteTrack menyesuaikan bitrate per kamera
         berdasarkan apa yang benar-benar bergerak di frame, dan menaikkannya kembali begitu ada kejadian.
       </Lede>
 
@@ -369,7 +371,7 @@ export function Cta() {
               ))}
             </ul>
             <a
-              href="mailto:halo@netra.id"
+              href="mailto:halo@bytetrack.id"
               className="mt-7 inline-flex h-10 items-center gap-2 rounded-xl border border-line-2 bg-raised/50 px-4 text-sm font-medium text-paper transition-colors hover:bg-raised"
             >
               Kirim rekaman uji
@@ -412,5 +414,64 @@ export function Cta() {
         </div>
       </div>
     </section>
+  )
+}
+
+/* --------------------------------------------------- cross-camera tracking */
+
+const PIPELINE: Array<[string, string, string]> = [
+  ['Deteksi', 'YOLO11', 'Setiap kendaraan dapat kotak di setiap frame.'],
+  ['Tracking satu kamera', 'ByteTrack', 'Kotak yang sama diberi track id selama kendaraan masih terlihat.'],
+  ['Re-ID lintas kamera', 'OSNet', 'Penampilan kendaraan disimpan sebagai embedding, lalu dicocokkan ke kamera lain.'],
+  ['Baca plat', 'ANPR', 'Plat dibaca setiap kali sudutnya memungkinkan, sebagai penanda paling kuat.'],
+  ['Peleburan identitas', 'fusion', 'Semua sinyal digabung jadi satu ID global per kendaraan.'],
+]
+
+export function CrossCamera() {
+  const ex = reidExample
+  return (
+    <Section id="lintas" mark="Pelacakan lintas kamera">
+      <Heading>Satu kendaraan, dua puluh empat kamera, satu identitas.</Heading>
+      <Lede>
+        Membaca plat di gerbang itu bagian yang gampang. Yang sulit adalah tetap tahu kendaraan mana yang mana setelah
+        ia masuk, berbelok, dan terlihat dari sudut yang platnya tidak kelihatan sama sekali.
+      </Lede>
+
+      <div className="mt-14 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <div className="rounded-2xl border border-line bg-panel p-6 sm:p-7">
+          <h3 className="text-[15px] font-semibold text-paper">Serah terima antar kamera</h3>
+          <p className="mb-6 mt-1 text-[12px] text-faint">
+            {ex.a.cam} → {ex.b.cam}, selisih {ex.gapSeconds} detik
+          </p>
+          <HandoffPair a={ex.a} b={ex.b} gapSeconds={ex.gapSeconds} />
+          <p className="mt-6 text-[13px] leading-relaxed text-dim">
+            Kedua frame itu kendaraan yang sama, difoto dua kali oleh dataset yang sama. Tanpa Re-ID, perjalanannya
+            terputus di frame kedua dan dashboard kehilangan jejaknya. Dengan Re-ID, ia tetap satu baris — lengkap
+            dengan zona terakhirnya.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-line bg-panel p-6 sm:p-7">
+          <h3 className="text-[15px] font-semibold text-paper">Sinyal yang dilebur</h3>
+          <p className="mb-6 mt-1 text-[12px] text-faint">Tidak ada satu sinyal yang boleh memutuskan sendirian.</p>
+          <FusionBars signals={ex.signals} verdict={ex.verdict} />
+        </div>
+      </div>
+
+      <ol className="mt-6 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
+        {PIPELINE.map(([stage, model, body], i) => (
+          <li key={stage} className="bg-panel p-5">
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[10px] text-faint">{String(i + 1).padStart(2, '0')}</span>
+              <span className="rounded border border-line-2 bg-raised/50 px-1.5 py-[1px] font-mono text-[10px] text-ice">
+                {model}
+              </span>
+            </div>
+            <h4 className="mt-3 text-[14px] font-semibold leading-snug text-paper">{stage}</h4>
+            <p className="mt-1.5 text-[12.5px] leading-relaxed text-dim">{body}</p>
+          </li>
+        ))}
+      </ol>
+    </Section>
   )
 }

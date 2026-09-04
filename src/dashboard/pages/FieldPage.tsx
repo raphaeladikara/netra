@@ -32,7 +32,7 @@ function StatusBar() {
 
 export default function FieldPage() {
   const [accepted, setAccepted] = useState(false)
-  const cam = cameras[5]
+  const cam = cameras[18]
 
   return (
     <>
@@ -52,13 +52,13 @@ export default function FieldPage() {
 
             <div className="mx-4 overflow-hidden rounded-2xl border border-warn/35 bg-warn/[0.05]">
               <div className="flex items-center gap-2 px-4 pb-2 pt-3.5">
-                <span className="size-2 rounded-full bg-warn" style={{ animation: 'netra-pulse 2s ease-in-out infinite' }} />
+                <span className="size-2 rounded-full bg-warn" style={{ animation: 'bt-pulse 2s ease-in-out infinite' }} />
                 <span className="text-[12px] text-dim">Peringatan · 12 menit lalu</span>
               </div>
               <div className="px-4">
                 <h3 className="text-[17px] font-bold tracking-[-0.02em] text-paper">Melebihi batas berhenti</h3>
-                <div className="mt-1 font-mono text-[17px] tracking-[0.04em] text-paper">B 1234 XYZ</div>
-                <div className="mt-1 text-[13px] text-dim">Area Loading · Cam 06</div>
+                <div className="mt-1 font-mono text-[17px] tracking-[0.04em] text-paper">L 1731 LI</div>
+                <div className="mt-1 text-[13px] text-dim">Area parkir · Cam 19</div>
               </div>
               <div className="p-4">
                 <CameraFeed camera={cam} compact className="aspect-video rounded-xl border border-line" />
@@ -84,9 +84,9 @@ export default function FieldPage() {
             </div>
             <ul className="px-5">
               {[
-                ['Parkir di jalur utama', 'B 4419 SDK · ditutup dengan foto', '08:52'],
-                ['Melebihi batas berhenti', 'B 2210 QWE · ditutup dengan foto', '08:11'],
-                ['Kendaraan belum terverifikasi', 'D 1145 RTU · plat dikoreksi manual', '07:36'],
+                ['Parkir di jalur utama', 'B 2005 POU · ditutup dengan foto', '08:52'],
+                ['Melebihi batas berhenti', 'AB 1633 SY · ditutup dengan foto', '08:11'],
+                ['Kendaraan belum terverifikasi', 'B 1186 COG · plat dikoreksi manual', '07:36'],
               ].map(([t, s, w]) => (
                 <li key={w} className="flex items-start gap-3 border-b border-line/70 py-3 last:border-0">
                   <span className="mt-[6px] size-2 shrink-0 rounded-full bg-ok" />
@@ -109,8 +109,8 @@ export default function FieldPage() {
 
             <div className="px-4">
               <div className="rounded-2xl border border-line bg-panel p-4">
-                <div className="font-mono text-[15px] tracking-[0.04em] text-paper">B 1234 XYZ</div>
-                <div className="mt-1 text-[12px] text-dim">Area Loading · berhenti 47 menit</div>
+                <div className="font-mono text-[15px] tracking-[0.04em] text-paper">L 1731 LI</div>
+                <div className="mt-1 text-[12px] text-dim">Area parkir · berhenti 47 menit</div>
               </div>
 
               <button className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-2 bg-raised/25 px-4 py-6 text-left transition-colors hover:border-azure/50">

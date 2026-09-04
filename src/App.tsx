@@ -11,6 +11,7 @@ import CamerasPage from './dashboard/pages/CamerasPage'
 import AnalyticsPage from './dashboard/pages/AnalyticsPage'
 import AuditPage from './dashboard/pages/AuditPage'
 import FieldPage from './dashboard/pages/FieldPage'
+import IdentityPage from './dashboard/pages/IdentityPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="kendaraan" element={<VehiclesPage />} />
           <Route path="kendaraan/:plate" element={<JourneyPage />} />
           <Route path="peringatan" element={<AlertsPage />} />
+          <Route path="identitas" element={<IdentityPage />} />
           <Route path="kamera" element={<CamerasPage />} />
           <Route path="analitik" element={<AnalyticsPage />} />
           <Route path="audit" element={<AuditPage />} />

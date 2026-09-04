@@ -3,7 +3,7 @@ import { UserPlus, CheckCircle2, MapPin } from 'lucide-react'
 import { TopBar, Page } from '../Shell'
 import { CameraFeed } from '../../components/cctv/CameraFeed'
 import { Panel, PanelHead, Segmented, Badge, Button, Stat, Field, Dot } from '../../components/ui'
-import { alerts, cameras, closedToday } from '../../lib/data'
+import { alerts, cameras, closedToday, zoneName } from '../../lib/data'
 import { cn } from '../../lib/cn'
 
 const SEV: Record<string, 'alarm' | 'warn' | 'neutral'> = { high: 'alarm', medium: 'warn', low: 'neutral' }
@@ -78,7 +78,7 @@ export default function AlertsPage() {
                         </td>
                         <td className="px-3 py-3 font-mono text-[13px] tracking-tight text-dim">{a.plate ?? '—'}</td>
                         <td className="px-3 py-3 text-[13px] text-dim">
-                          {a.zone} · {a.cam}
+                          {zoneName(a.zoneId)} · {a.cam}
                         </td>
                         <td className="px-3 py-3 font-mono text-[12px] tabular-nums text-dim">{a.openedMinutes} menit</td>
                         <td className="px-3 py-3">
@@ -114,7 +114,7 @@ export default function AlertsPage() {
                 </div>
                 <div className="mt-3">
                   <Field label="Plat">{active.plate ?? '—'}</Field>
-                  <Field label="Lokasi">{active.zone}</Field>
+                  <Field label="Lokasi">{zoneName(active.zoneId)}</Field>
                   <Field label="Kamera">{active.cam}</Field>
                   <Field label="Terbuka">{active.openedMinutes} menit</Field>
                   <Field label="Petugas">{active.assignee ? `${active.assignee} · ${active.post}` : 'Belum ditugaskan'}</Field>

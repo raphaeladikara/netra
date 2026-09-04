@@ -1,4 +1,4 @@
-import { cameras, vehicles, type Vehicle } from '../../lib/data'
+import { cameras, vehicles, cameraByName, vehicleByPlate, type Vehicle } from '../../lib/data'
 import { cn } from '../../lib/cn'
 
 const BLOCKS: Array<{ x: number; y: number; w: number; h: number; label: string; sub?: string }> = [
@@ -10,11 +10,10 @@ const BLOCKS: Array<{ x: number; y: number; w: number; h: number; label: string;
   { x: 636, y: 332, w: 316, h: 212, label: 'Blok Gudang L', sub: '14 unit' },
 ]
 
-const STATUS_TONE: Record<Vehicle['status'], string> = {
+const FLAG_TONE: Record<Vehicle['flag'], string> = {
   normal: 'var(--color-azure)',
   overstay: 'var(--color-warn)',
   unverified: 'var(--color-faint)',
-  left: 'var(--color-ok)',
 }
 
 type Props = {
@@ -26,14 +25,20 @@ type Props = {
   compact?: boolean
 }
 
-/** The route Cam 01 → Cam 03 → Cam 06 that the demo vehicle actually takes. */
-const ROUTE = 'M340 74 L340 300 L452 300 L452 424'
-
 export function SiteMap({ selected, onSelect, filter = 'all', showRoute = true, className, compact = false }: Props) {
+  // the traced path is just the map positions of the cameras that saw it
+  const route: Array<[number, number]> = selected
+    ? (vehicleByPlate(selected)?.hops ?? [])
+        .map((h) => cameraByName(h.cam))
+        .filter((c): c is NonNullable<typeof c> => Boolean(c))
+        .map((c) => [c.x, c.y] as [number, number])
+        .filter((p, i, a) => i === 0 || p[0] !== a[i - 1][0] || p[1] !== a[i - 1][1])
+    : []
+
   const shown = vehicles
-    .filter((v) => v.status !== 'left')
+    .filter((v) => v.status === 'INSIDE')
     .filter((v) =>
-      filter === 'all' ? true : filter === 'truck' ? v.type.includes('Truk') || v.type === 'Tronton' : v.status === 'overstay',
+      filter === 'all' ? true : filter === 'truck' ? v.type.includes('Truk') : v.flag === 'overstay',
     )
 
   return (
@@ -107,23 +112,29 @@ export function SiteMap({ selected, onSelect, filter = 'all', showRoute = true, 
         </g>
       ))}
 
-      {/* traced route of the selected vehicle */}
-      {showRoute && selected === 'B 1234 XYZ' && (
-        <path
-          d={ROUTE}
-          fill="none"
-          stroke="var(--color-scan)"
-          strokeWidth="2.5"
-          strokeDasharray="7 7"
-          strokeLinecap="round"
-          style={{ animation: 'netra-track 3.2s linear infinite' }}
-        />
+      {/* the route the selected vehicle actually took, camera by camera */}
+      {showRoute && route.length > 1 && (
+        <>
+          <path
+            d={route.map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ')}
+            fill="none"
+            stroke="var(--color-scan)"
+            strokeWidth="2.5"
+            strokeDasharray="7 7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ animation: 'bt-track 3.2s linear infinite' }}
+          />
+          {route.map((p, i) => (
+            <circle key={i} cx={p[0]} cy={p[1]} r="3.5" fill="var(--color-scan)" />
+          ))}
+        </>
       )}
 
       {/* vehicles */}
       {shown.map((v) => {
         const active = v.plate === selected
-        const tone = STATUS_TONE[v.status]
+        const tone = FLAG_TONE[v.flag]
         return (
           <g
             key={v.plate}
@@ -138,7 +149,7 @@ export function SiteMap({ selected, onSelect, filter = 'all', showRoute = true, 
               }
             }}
           >
-            {active && <circle cx={v.x} cy={v.y} r="11" fill="none" stroke={tone} strokeWidth="2" style={{ animation: 'netra-ping 2s ease-out infinite' }} />}
+            {active && <circle cx={v.x} cy={v.y} r="11" fill="none" stroke={tone} strokeWidth="2" style={{ animation: 'bt-ping 2s ease-out infinite' }} />}
             <circle cx={v.x} cy={v.y} r={active ? 7 : 5.5} fill={tone} stroke="hsl(222 42% 5%)" strokeWidth="2" />
             {(active || !compact) && (
               <g transform={`translate(${v.x + 12} ${v.y - 11})`} className={active ? undefined : 'max-lg:hidden'}>

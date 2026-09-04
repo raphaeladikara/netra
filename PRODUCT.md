@@ -1,8 +1,9 @@
-# Netra — konteks produk
+# ByteTrack — konteks produk
 
 ## Apa ini
 
-Purwarupa web untuk **Netra**, platform video intelligence untuk kawasan industri.
+Purwarupa web untuk **ByteTrack**, sistem pelacakan kendaraan lintas kamera (MTMCT)
+untuk kawasan industri.
 Nama, angka, dan seluruh isinya fiktif — dipakai sebagai contoh produk, bukan materi
 penawaran ke klien mana pun.
 
@@ -16,16 +17,31 @@ Dua permukaan:
 ## Mekanisme yang membedakan
 
 Kamera yang sudah terpasang dibaca terus-menerus, lalu penampakan yang terpisah-pisah
-dijahit jadi **satu perjalanan kendaraan**: masuk lewat gerbang mana, lewat kamera apa
-saja, berhenti berapa lama, keluar jam berapa — semuanya bisa dicari lewat plat nomor
-dan disertai snapshot bukti.
+dijahit jadi **satu identitas kendaraan yang stabil lintas kamera**. Plat dibaca kalau
+sudutnya memungkinkan; kalau tidak, embedding Re-ID, warna, tipe, topologi kamera, dan
+waktu tempuh yang meneruskan identitasnya.
 
-Ini yang dijual. Bukan "AI", bukan jumlah filter.
+Yang dijual bukan “AI” dan bukan jumlah filter, tapi jawaban atas tiga pertanyaan:
+kendaraan mana yang masih di dalam, terakhir terlihat di zona apa, dan lewat mana
+jalannya.
+
+## Rantai pemrosesan
+
+| Tahap | Peran |
+|---|---|
+| Deteksi (YOLO) | kotak kendaraan per frame |
+| Tracking satu kamera (ByteTrack) | track id stabil selama kendaraan terlihat |
+| Re-ID lintas kamera (OSNet) | embedding penampilan untuk dicocokkan ke kamera lain |
+| ANPR | string plat, penanda identitas paling kuat |
+| Peleburan identitas | satu ID global per kendaraan, dengan skor keyakinan |
 
 ## Batas yang dipegang
 
 - Semua inferensi di on-premise. Video tidak keluar dari infrastruktur pelanggan.
 - Plat dengan keyakinan rendah tidak dibuang, tapi masuk antrean verifikasi manusia.
+- Kecocokan Re-ID ditolak kalau transisi kameranya mustahil menurut topologi, seberapa
+  pun mirip penampilannya.
+- Penggabungan identitas di bawah ambang 92% diputuskan supervisor, bukan sistem.
 - Membuka palang tidak boleh bergantung pada satu prediksi AI tanpa fallback manusia.
 - Setiap pencarian dan ekspor bukti tercatat di jejak audit yang tidak bisa dihapus
   dari dalam aplikasi.

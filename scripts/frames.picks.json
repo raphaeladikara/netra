@@ -1,0 +1,135 @@
+{
+  "train756": {
+    "zone": "Gerbang Utara"
+  },
+  "test034": {
+    "zone": "Gerbang Utara"
+  },
+  "train086": {
+    "zone": "Jalur utama"
+  },
+  "train126": {
+    "zone": "Jalur utama"
+  },
+  "train499": {
+    "zone": "Jalur barat"
+  },
+  "test027": {
+    "zone": "Area Loading"
+  },
+  "train449": {
+    "zone": "Area Loading"
+  },
+  "train451": {
+    "zone": "Blok Gudang B"
+  },
+  "train394": {
+    "zone": "Blok Gudang L"
+  },
+  "train103": {
+    "zone": "Blok Gudang C"
+  },
+  "train433": {
+    "zone": "Blok Gudang C"
+  },
+  "train263": {
+    "zone": "Gerbang Selatan",
+    "plate": 1
+  },
+  "train123": {
+    "zone": "Blok Gudang L"
+  },
+  "test029": {
+    "zone": "Gudang Sentosa"
+  },
+  "train553": {
+    "zone": "Gudang Sentosa"
+  },
+  "train089": {
+    "zone": "Jalur timur"
+  },
+  "train674": {
+    "zone": "Jalur utara"
+  },
+  "val070": {
+    "zone": "Jalur barat"
+  },
+  "test054": {
+    "zone": "Area parkir"
+  },
+  "test073": {
+    "zone": "Ruko Komersial"
+  },
+  "train647": {
+    "zone": "Pagar perimeter"
+  },
+  "train370": {
+    "zone": "Pagar perimeter"
+  },
+  "train242": {
+    "zone": "Area Loading"
+  },
+  "train316": {
+    "zone": "Gerbang Utara"
+  },
+  "train346": {
+    "zone": "Gerbang Utara"
+  },
+  "train785": {
+    "zone": "Gerbang Selatan"
+  },
+  "test098": {
+    "zone": "Gerbang Utara"
+  },
+  "train303": {
+    "zone": "Jalur utama"
+  },
+  "train767": {
+    "zone": "Area Loading"
+  },
+  "train183": {
+    "zone": "Jalur utama"
+  },
+  "train352": {
+    "zone": "Gerbang Selatan"
+  },
+  "train157": {
+    "zone": "Jalur barat"
+  },
+  "train158": {
+    "zone": "Jalur barat"
+  },
+  "train159": {
+    "zone": "Jalur barat"
+  },
+  "train160": {
+    "zone": "Jalur barat"
+  },
+  "train162": {
+    "zone": "Jalur barat"
+  },
+  "val087": {
+    "zone": "Jalur utama"
+  },
+  "train700": {
+    "zone": "Jalur utama"
+  },
+  "train701": {
+    "zone": "Jalur utama"
+  },
+  "train703": {
+    "zone": "Jalur utama"
+  },
+  "train705": {
+    "zone": "Jalur utama"
+  },
+  "train305": {
+    "zone": "Area parkir"
+  },
+  "train306": {
+    "zone": "Area parkir"
+  },
+  "train307": {
+    "zone": "Area parkir"
+  }
+}

@@ -2,11 +2,11 @@ import { useEffect } from 'react'
 import { Nav, Footer } from './parts'
 import { Hero } from './Hero'
 import { Platform } from './Platform'
-import { Recording, Archive, Bandwidth, Capabilities, Cta } from './Sections'
+import { CrossCamera, Recording, Archive, Bandwidth, Capabilities, Cta } from './Sections'
 
 export default function Landing() {
   useEffect(() => {
-    document.title = 'Netra — Semua Kamera, Satu Dashboard Cerdas'
+    document.title = 'ByteTrack — Satu Kendaraan, Semua Kamera, Satu Identitas'
   }, [])
 
   return (
@@ -15,6 +15,7 @@ export default function Landing() {
       <main>
         <Hero />
         <Platform />
+        <CrossCamera />
         <Recording />
         <Archive />
         <Bandwidth />

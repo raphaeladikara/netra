@@ -4,41 +4,35 @@ import { Search, Download, Plus, ArrowUpRight } from 'lucide-react'
 import { TopBar, Page } from '../Shell'
 import { CameraFeed } from '../../components/cctv/CameraFeed'
 import { Panel, PanelHead, Badge, Button, Field, Dot } from '../../components/ui'
-import { vehicles, cameras } from '../../lib/data'
+import { vehicles, cameraByName, cameras, zoneName } from '../../lib/data'
+import { frames } from '../../lib/frames'
 import { cn } from '../../lib/cn'
 
-const STATUS: Record<string, { label: string; tone: 'azure' | 'warn' | 'neutral' | 'ok' }> = {
-  normal: { label: 'Di dalam kawasan', tone: 'azure' },
-  overstay: { label: 'Melebihi batas', tone: 'warn' },
-  unverified: { label: 'Belum terverifikasi', tone: 'neutral' },
-  left: { label: 'Sudah keluar', tone: 'ok' },
+const METHOD = {
+  plate: { label: 'plat', tone: 'ok' as const },
+  fusion: { label: 'plat + re-id', tone: 'scan' as const },
+  reid: { label: 're-id', tone: 'warn' as const },
 }
 
-const KIND_TONE = {
-  enter: 'azure',
-  pass: 'azure',
-  stop: 'scan',
-  flag: 'warn',
-  exit: 'ok',
-} as const
+const ago = (s: number) => (s < 60 ? `${s} dtk lalu` : `${Math.round(s / 60)} mnt lalu`)
 
 export default function VehiclesPage() {
   const [q, setQ] = useState('')
-  const [selected, setSelected] = useState<string>('B 1234 XYZ')
+  const [selected, setSelected] = useState<string>(vehicles[0].plate)
 
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase().replace(/\s+/g, '')
     if (!needle) return vehicles
-    return vehicles.filter(
-      (v) =>
-        v.plate.toLowerCase().replace(/\s+/g, '').includes(needle) ||
-        v.tenant.toLowerCase().includes(q.trim().toLowerCase()) ||
-        v.type.toLowerCase().includes(q.trim().toLowerCase()),
+    return vehicles.filter((v) =>
+      [v.plate, v.id, v.make, v.type, v.color, v.tenant]
+        .join(' ')
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .includes(needle),
     )
   }, [q])
 
   const v = vehicles.find((x) => x.plate === selected) ?? results[0]
-  const cam = v ? cameras.find((c) => c.name === v.sightings[v.sightings.length - 1].cam) ?? cameras[0] : cameras[0]
 
   return (
     <>
@@ -48,7 +42,7 @@ export default function VehiclesPage() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Cari plat, tenant, atau jenis kendaraan"
+            placeholder="Cari plat, ID kendaraan, merek, atau tenant"
             className="h-10 w-full rounded-lg border border-line bg-ink-2 pl-9 pr-16 font-mono text-[13px] tracking-tight text-paper transition-colors placeholder:font-sans placeholder:tracking-normal focus:border-azure/60 focus:outline-none"
           />
           <span className="pointer-events-none absolute right-3 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
@@ -65,22 +59,22 @@ export default function VehiclesPage() {
               <div className="px-5 py-14 text-center">
                 <p className="text-[14px] text-paper">Tidak ada kendaraan yang cocok dengan “{q}”.</p>
                 <p className="mx-auto mt-2 max-w-[46ch] text-[13px] leading-relaxed text-dim">
-                  Coba potongan platnya saja, misalnya <span className="font-mono text-paper">1234</span>. Plat yang
-                  terbaca sebagian tetap tersimpan dan bisa dicari.
+                  Coba potongan platnya saja, misalnya <span className="font-mono text-paper">1473</span>. Plat yang
+                  hanya terbaca sebagian tetap tersimpan dan bisa dicari.
                 </p>
                 <Button className="mt-5" onClick={() => setQ('')}>
                   Bersihkan pencarian
                 </Button>
               </div>
             ) : (
-              <div className="max-h-[38vh] overflow-y-auto">
+              <div className="max-h-[36vh] overflow-y-auto">
                 <table className="w-full text-left">
                   <thead className="sticky top-0 bg-panel">
                     <tr className="border-b border-line font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                       <th className="px-5 py-2.5 font-normal">Plat</th>
-                      <th className="px-3 py-2.5 font-normal">Jenis</th>
-                      <th className="hidden px-3 py-2.5 font-normal sm:table-cell">Tenant</th>
-                      <th className="px-3 py-2.5 font-normal">Masuk</th>
+                      <th className="px-3 py-2.5 font-normal">ID</th>
+                      <th className="hidden px-3 py-2.5 font-normal sm:table-cell">Kendaraan</th>
+                      <th className="px-3 py-2.5 font-normal">Zona sekarang</th>
                       <th className="px-5 py-2.5 font-normal">Status</th>
                     </tr>
                   </thead>
@@ -95,11 +89,19 @@ export default function VehiclesPage() {
                         )}
                       >
                         <td className="px-5 py-2.5 font-mono text-[13px] tracking-tight text-paper">{r.plate}</td>
-                        <td className="px-3 py-2.5 text-[13px] text-dim">{r.type}</td>
-                        <td className="hidden px-3 py-2.5 text-[13px] text-dim sm:table-cell">{r.tenant}</td>
-                        <td className="px-3 py-2.5 font-mono text-[12px] tabular-nums text-dim">{r.enteredAt}</td>
+                        <td className="px-3 py-2.5 font-mono text-[12px] text-faint">{r.id}</td>
+                        <td className="hidden px-3 py-2.5 text-[13px] text-dim sm:table-cell">
+                          {r.make} · {r.color.toLowerCase()}
+                        </td>
+                        <td className="px-3 py-2.5 text-[13px] text-dim">{zoneName(r.zoneId)}</td>
                         <td className="px-5 py-2.5">
-                          <Badge tone={STATUS[r.status].tone}>{STATUS[r.status].label}</Badge>
+                          {r.status === 'INSIDE' ? (
+                            <Badge tone={r.flag === 'overstay' ? 'warn' : 'azure'}>
+                              {r.flag === 'overstay' ? 'Melebihi batas' : 'Di dalam'}
+                            </Badge>
+                          ) : (
+                            <Badge tone="ok">Sudah keluar</Badge>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -113,47 +115,51 @@ export default function VehiclesPage() {
             <Panel className="flex min-w-0 flex-1 flex-col overflow-hidden p-0">
               <PanelHead
                 title="Riwayat penampakan"
-                meta={`${new Set(v.sightings.map((s) => s.cam)).size} kamera · ${v.dwellMinutes} menit di dalam kawasan`}
+                meta={`${new Set(v.hops.map((h) => h.cam)).size} kamera · ${v.dwellMinutes} menit di dalam kawasan`}
               />
               <div className="min-h-0 flex-1 overflow-x-auto">
-                <table className="w-full min-w-[600px] text-left">
+                <table className="w-full min-w-[680px] text-left">
                   <thead>
                     <tr className="border-b border-line font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
                       <th className="px-5 py-2.5 font-normal">Waktu</th>
-                      <th className="px-3 py-2.5 font-normal">Kamera</th>
+                      <th className="px-3 py-2.5 font-normal">Kamera / zona</th>
                       <th className="px-3 py-2.5 font-normal">Kejadian</th>
-                      <th className="px-3 py-2.5 font-normal">Keyakinan</th>
+                      <th className="px-3 py-2.5 font-normal">Identitas dari</th>
                       <th className="px-5 py-2.5 font-normal">Bukti</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line/70">
-                    {v.sightings.map((s, i) => {
-                      const c = cameras.find((x) => x.name === s.cam) ?? cameras[0]
+                    {v.hops.map((h, i) => {
+                      const c = cameraByName(h.cam) ?? cameras[0]
+                      const m = METHOD[h.by]
                       return (
                         <tr key={i} className="align-middle transition-colors hover:bg-raised/30">
-                          <td className="px-5 py-3 font-mono text-[13px] tabular-nums text-paper">{s.time}</td>
+                          <td className="px-5 py-3 font-mono text-[13px] tabular-nums text-paper">{h.time}</td>
                           <td className="px-3 py-3 text-[13px] text-dim">
                             <span className="flex items-center gap-2">
-                              <Dot tone={KIND_TONE[s.kind]} />
-                              {s.cam} · {s.zone}
+                              <Dot tone={m.tone} />
+                              {h.cam} · {zoneName(h.zoneId)}
                             </span>
                           </td>
-                          <td className="px-3 py-3 text-[13px] text-paper">{s.event}</td>
+                          <td className="px-3 py-3 text-[13px] text-paper">{h.event}</td>
                           <td className="px-3 py-3">
-                            {s.confidence == null ? (
-                              <span className="font-mono text-[12px] text-warn">—</span>
-                            ) : (
-                              <Badge tone={s.confidence >= 95 ? 'ok' : 'warn'} mono>
-                                {s.confidence}%
+                            <span className="flex flex-col gap-0.5">
+                              <Badge tone={m.tone} mono>
+                                {m.label} {h.confidence}%
                               </Badge>
-                            )}
+                              <span className="font-mono text-[10px] text-faint">
+                                {h.plateConf != null ? `ocr ${h.plateConf}%` : 'ocr —'}
+                                {h.reidSim != null ? ` · sim ${h.reidSim}` : ''}
+                              </span>
+                            </span>
                           </td>
                           <td className="px-5 py-3">
                             <CameraFeed
-                              camera={c}
+                              camera={{ ...c, frame: h.frame }}
                               compact
                               live={false}
-                              time={s.time}
+                              boxes={false}
+                              time={h.time}
                               className="h-14 w-24 rounded-md border border-line"
                             />
                           </td>
@@ -177,11 +183,11 @@ export default function VehiclesPage() {
                   to={`/app/kendaraan/${encodeURIComponent(v.plate)}`}
                   className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2 text-[13px] text-ice transition-colors hover:text-paper"
                 >
-                  Lihat detail perjalanan
+                  Lihat perjalanan lengkap
                   <ArrowUpRight className="size-3.5" />
                 </Link>
                 <span className="ml-auto text-[12px] text-faint">
-                  {v.status === 'left' ? 'Perjalanan sudah ditutup' : 'Perjalanan masih berjalan — belum tercatat keluar'}
+                  {v.status === 'OUTSIDE' ? 'Perjalanan sudah ditutup' : 'Masih berjalan — belum tercatat keluar'}
                 </span>
               </div>
             </Panel>
@@ -190,28 +196,52 @@ export default function VehiclesPage() {
 
         {v && (
           <Panel className="h-fit overflow-hidden p-0">
-            <PanelHead title="Kendaraan" />
+            <PanelHead title="Identitas kendaraan" meta={v.id} />
             <div className="px-5 pt-5">
               <div className="font-mono text-[26px] leading-none tracking-[0.05em] text-paper">{v.plate}</div>
               <div className="mt-2 text-[13px] text-dim">
-                {v.type} · sumbu {v.axles} · {v.color.toLowerCase()}
+                {v.make} · {v.type} · {v.color.toLowerCase()}
               </div>
-              <div className="mt-3">
-                <Badge tone={STATUS[v.status].tone}>{STATUS[v.status].label}</Badge>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {v.status === 'INSIDE' ? (
+                  <Badge tone="ok">● DI DALAM KAWASAN</Badge>
+                ) : (
+                  <Badge tone="neutral">SUDAH KELUAR</Badge>
+                )}
+                <Badge tone="neutral" mono>
+                  emb {v.embedding}
+                </Badge>
               </div>
             </div>
+
             <div className="p-5">
-              <CameraFeed camera={cam} className="aspect-video rounded-lg border border-line" />
+              <div className="overflow-hidden rounded-lg border border-line">
+                <img src={frames[v.frame].crop} alt="" loading="lazy" className="aspect-video w-full object-cover" />
+              </div>
+              <p className="mt-2 text-[11px] text-faint">Crop plat dari penampakan pertama di gerbang</p>
             </div>
+
             <div className="px-5 pb-5">
+              <Field label="Zona sekarang">{zoneName(v.zoneId)}</Field>
+              <Field label="Kamera terakhir">{v.cam}</Field>
+              <Field label="Terakhir terlihat">
+                {v.lastSeen} · {ago(v.ago)}
+              </Field>
+              <Field label="Masuk">{v.enteredAt}</Field>
+              <Field label="Keluar">{v.exitedAt ?? '—'}</Field>
+              <Field label="Kamera menangkap">{new Set(v.hops.map((h) => h.cam)).size}</Field>
               <Field label="Tenant tujuan">{v.tenant}</Field>
-              <Field label="Pertama terlihat">{v.enteredAt}</Field>
-              <Field label="Terakhir terlihat">{v.sightings[v.sightings.length - 1].time}</Field>
-              <Field label="Kamera menangkap">{new Set(v.sightings.map((s) => s.cam)).size}</Field>
-              <Field label="Arah masuk">{v.gateIn}</Field>
-              <Field label="Zona berhenti">{v.zone}</Field>
-              <Field label="Batas zona">45 menit</Field>
               <Field label="Snapshot tersimpan">{v.snapshots}</Field>
+            </div>
+
+            <div className="border-t border-line px-5 py-4">
+              <Link
+                to="/app/identitas"
+                className="inline-flex items-center gap-1.5 text-[13px] text-ice transition-colors hover:text-paper"
+              >
+                Cara identitas ini disambung
+                <ArrowUpRight className="size-3.5" />
+              </Link>
             </div>
           </Panel>
         )}
