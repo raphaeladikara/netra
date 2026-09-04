@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Surfaces — navy-black, tuned for a darkened control room */
+  --color-ink: hsl(222 42% 5%);
+  --color-ink-2: hsl(220 38% 8%);
+  --color-ink-3: hsl(219 32% 11%);
+  --color-panel: hsl(220 34% 9.5%);
+  --color-raised: hsl(219 26% 15%);
+  --color-line: hsl(217 25% 17%);
+  --color-line-2: hsl(217 24% 25%);
+
+  /* Text */
+  --color-paper: hsl(213 32% 96%);
+  --color-dim: hsl(215 16% 72%);
+  --color-faint: hsl(215 14% 54%);
+
+  /* Brand */
+  --color-azure: hsl(217 91% 58%);
+  --color-azure-hi: hsl(213 94% 66%);
+  --color-ice: hsl(205 95% 78%);
+
+  /* Signal */
+  --color-ok: hsl(152 62% 46%);
+  --color-warn: hsl(38 94% 58%);
+  --color-alarm: hsl(356 80% 62%);
+  --color-scan: hsl(188 92% 56%);
+
+  --radius-card: 14px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --grid: hsl(205 100% 80% / 0.05);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: hsl(217 91% 58% / 0.42);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(217 22% 26%);
+    border: 3px solid var(--color-ink);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(217 50% 40%); }
+  * { scrollbar-color: hsl(217 22% 26%) transparent; scrollbar-width: thin; }
+
+  :focus-visible {
+    outline: 2px solid hsl(213 94% 70%);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  a { text-underline-offset: 3px; }
+
+  ::placeholder { color: var(--color-faint); }
+
+  input[type="range"] { accent-color: var(--color-azure); }
+}
+
+@layer utilities {
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* The faint blueprint grid the whole product sits on */
+  .bp-grid {
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .bp-grid-sm {
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .mask-fade-b { mask-image: linear-gradient(to bottom, #000 55%, transparent 100%); }
+  .mask-fade-edges { mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+
+  .glow-azure { box-shadow: 0 24px 90px -30px hsl(217 91% 58% / 0.85), 0 2px 10px -4px hsl(217 91% 40% / 0.6); }
+
+  .hairline { box-shadow: inset 0 1px 0 hsl(205 100% 90% / 0.06); }
+}
+
+@keyframes netra-scan {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  8%   { opacity: 0.9; }
+  92%  { opacity: 0.9; }
+  100% { transform: translateY(1200%); opacity: 0; }
+}
+@keyframes netra-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(0.86); }
+}
+@keyframes netra-ping {
+  0%   { transform: scale(0.6); opacity: 0.7; }
+  80%, 100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes netra-rise {
+  from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes netra-track {
+  from { stroke-dashoffset: 320; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.anim-rise { animation: netra-rise 0.8s var(--ease-out-expo) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

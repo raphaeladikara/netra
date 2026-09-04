@@ -1,0 +1,83 @@
+# Netra — keputusan visual
+
+Dunia visualnya adalah **ruang kendali yang lampunya diredupkan**: layar biru di
+ruangan gelap, denah kawasan sebagai gambar teknik, dan angka yang dibaca sekilas.
+Bukan "SaaS gelap dengan aksen" — gelapnya dipilih dari tempat pemakaiannya.
+
+## Token
+
+Semua token hidup di `src/index.css` blok `@theme`. Tidak ada warna mentah di komponen
+kecuali di dalam SVG adegan CCTV dan grafik.
+
+| Token | Nilai | Dipakai untuk |
+|---|---|---|
+| `ink` | `hsl(222 42% 5%)` | latar aplikasi |
+| `ink-2` | `hsl(220 38% 8%)` | latar sekunder, bingkai |
+| `panel` | `hsl(220 34% 9.5%)` | permukaan kartu |
+| `raised` | `hsl(219 26% 15%)` | kontrol, chip |
+| `line` / `line-2` | `hsl(217 25% 17%)` / `hsl(217 24% 25%)` | garis pemisah, garis kontrol |
+| `paper` / `dim` / `faint` | 96% / 72% / 54% lightness | tiga tingkat teks |
+| `azure` | `hsl(217 91% 58%)` | aksi utama, identitas |
+| `azure-hi` | `hsl(213 94% 66%)` | hover aksi utama |
+| `ice` | `hsl(205 95% 78%)` | ikon dan penekanan di atas panel |
+| `ok` `warn` `alarm` | hijau / kuning / merah | status, tidak pernah dipinjam untuk seri grafik |
+| `scan` | `hsl(188 92% 56%)` | kotak deteksi mesin, titik kamera |
+
+Pembagian kerjanya tegas: **biru = produk dan tindakan, sian = yang dilihat mesin,
+kuning/merah = yang butuh manusia.** Warna status tidak pernah dipakai sebagai warna
+dekoratif.
+
+## Tipografi
+
+- Plus Jakarta Sans untuk semua teks.
+- JetBrains Mono untuk yang harus dibandingkan sebagai deret: plat nomor, jam,
+  ID kamera, persentase, dan label sumbu. Bukan sebagai kostum "teknis".
+- Judul landing memakai `clamp()` dengan tracking sampai `-0.045em`; makin besar
+  makin rapat.
+- Angka tabel selalu `tabular-nums`.
+
+## Adegan kamera
+
+`CctvScene.tsx` menggambar enam jenis pemandangan (gerbang, jalur, area loading,
+gudang, parkir, perimeter) sebagai SVG dari seed per kamera, lengkap dengan kolam
+cahaya lampu sodium, vignette, dan garis interlace tipis. `CameraFeed.tsx` menumpuk
+lapisan overlay di atasnya: kotak deteksi, label, jam, REC, dan sapuan analisis.
+
+Menukar ke rekaman asli cukup lewat `<CameraFeed src="..." />` — lapisan overlaynya
+tidak berubah.
+
+## Gerak
+
+Satu gerakan utama: **sapuan analisis** yang turun pelan di feed kamera yang sedang
+difokuskan. Sisanya berhemat — hanya denyut pada status yang benar-benar hidup, ping
+sekali pada kendaraan terpilih di peta, dan `netra-rise` untuk masuknya hero.
+
+Umpan kamera kecil (`compact`) tidak beranimasi sama sekali: dinding 16 kamera harus
+tetap ringan. Seluruh animasi dimatikan di `prefers-reduced-motion`.
+
+## Grafik
+
+Palet kategorikal `#4C8DF6` / `#C96A3F` — diverifikasi dengan validator dataviz pada
+permukaan `#10192B`: lolos pita lightness, ambang chroma, pemisahan CVD
+(protan ΔE 26,5 · tritan ΔE 28,0), dan kontras. Ukuran tunggal memakai satu hue biru.
+
+Aturan yang dipegang: tidak pernah dua sumbu Y, legenda selalu ada untuk dua seri
+atau lebih, teks memakai token teks bukan warna seri, dan tersedia tampilan tabel.
+
+## Permukaan browser
+
+Scrollbar, caret, ring fokus, dan warna seleksi diambil dari palet, bukan dari
+default browser.
+
+## Yang sengaja tidak dipakai
+
+- Teks bergradien.
+- Kaca/blur sebagai hiasan (blur hanya di header yang menempel dan di tooltip).
+- Garis tebal berwarna di sisi kartu.
+- Kartu seragam ikon + judul + paragraf sebagai struktur halaman.
+
+## Grid biru
+
+Latar bergaris di hero dan di timeline arsip adalah **permukaan gambar teknik**, sama
+seperti denah kawasan di dalamnya — bukan hiasan. Ia berhenti persis di tempat
+kontennya berhenti jadi denah.
